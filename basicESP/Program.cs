@@ -53,7 +53,6 @@ while (true)
         Entity entity = new Entity();
         entity.team = swed.ReadInt(currentPawn, m_iTeamNum);
         entity.health = swed.ReadInt(currentPawn, m_iHealth);
-
         entity.position = swed.ReadVec(currentPawn, m_vOldOrigin);
         entity.viewoffset = swed.ReadVec(currentPawn, m_vecViewOffset);
         Vector3 aboveHeadPosition = new Vector3(entity.position.X, entity.position.Y, entity.position.Z + heightOffset);

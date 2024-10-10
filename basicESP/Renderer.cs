@@ -103,7 +103,7 @@ namespace basicESP
                 float boxLeft = entity.viewPosition2D.X - entityHeight / 3;
                 float boxRight = entity.position2D.X + entityHeight / 3;
 
-                float barPercentWidth = 0.05f;
+                float barPercentWidth = 0.03f;
                 float barPixelWidth = barPercentWidth * (boxRight - boxLeft);
 
                 float barHeight = entityHeight * (entity.health / 100f);
