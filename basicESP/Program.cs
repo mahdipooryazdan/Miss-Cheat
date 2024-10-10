@@ -25,6 +25,11 @@ int m_hPlayerPawn = 0x80C;
 int m_vecViewOffset = 0xCA8;
 int m_iszPlayerName = 0x660;
 
+int m_Item = 0x50;
+int m_pClippingWeapon = 0x1398;
+int m_iItemDefinitionIndex = 0x1BA;
+int m_AttributeManager = 0x1140;
+
 int m_iHealth = 0x344;
 while (true)
 {
@@ -45,25 +50,32 @@ while (true)
         if (currentPawn == IntPtr.Zero) continue;
 
         int lifeState = swed.ReadInt(currentPawn, m_lifeState);
-
         if (lifeState != 256) continue;
+        IntPtr currentWeapon = swed.ReadPointer(currentPawn, m_pClippingWeapon);
+        short WeaponDefinitionIndex = swed.ReadShort(currentWeapon, m_AttributeManager + m_Item + m_iItemDefinitionIndex);
+        if (WeaponDefinitionIndex == -1) continue;
+        Console.WriteLine(currentWeapon);
 
         float heightOffset = 12;
         float[] viewMatrix = swed.ReadMatrix(client + dwViewMatrix);
         Entity entity = new Entity();
+        //entity.currentWeaponName = WeaponDefinitionIndex;
         entity.team = swed.ReadInt(currentPawn, m_iTeamNum);
         entity.health = swed.ReadInt(currentPawn, m_iHealth);
         entity.position = swed.ReadVec(currentPawn, m_vOldOrigin);
         entity.viewoffset = swed.ReadVec(currentPawn, m_vecViewOffset);
         Vector3 aboveHeadPosition = new Vector3(entity.position.X, entity.position.Y, entity.position.Z + heightOffset);
         entity.position2D = Calculate.WorldToScreen(viewMatrix, entity.position, screenSize);
+        entity.currentWeaponName = Enum.GetName(typeof(Weapon), WeaponDefinitionIndex);
         entity.name = swed.ReadString(currentController, m_iszPlayerName, 16).Split("\0")[0];
         entity.viewPosition2D = Calculate.WorldToScreen(viewMatrix, Vector3.Add(aboveHeadPosition, entity.viewoffset), screenSize);
         entities.Add(entity);
+        Console.WriteLine($"ent : {entity.currentWeaponName}");
 
 
     }
     renderer.UpdateLocalPlayer(localPlayer);
     renderer.UpdateEntites(entities);
-
+    Thread.Sleep(5);
+    Console.Clear();
 }

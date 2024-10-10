@@ -34,9 +34,11 @@ namespace basicESP
         private bool enableName = true;
         private bool enableHealbar = false;
         private bool enableHealbox = false;
+        private bool enableWeaponName = false;
         private Vector4 enemyColor = new Vector4(1, 0, 0, 1);
         private Vector4 teamColor = new Vector4(0, 1, 0, 1);
         private Vector4 nameColor = new Vector4(1, 1, 1, 1);
+        private Vector4 WeaponNameColor = new Vector4(1, 1, 1, 1);
 
 
         ImDrawListPtr drawList;
@@ -49,6 +51,7 @@ namespace basicESP
             ImGui.Checkbox("Enable Name", ref enableName);
             ImGui.Checkbox("Enable Heal Bar", ref enableHealbar);
             ImGui.Checkbox("Enable Heal Box", ref enableHealbox);
+            ImGui.Checkbox("Enable Weapon Name", ref enableWeaponName);
 
             if (ImGui.CollapsingHeader("Team Color"))
             {
@@ -65,6 +68,11 @@ namespace basicESP
                 ImGui.ColorPicker4("##Enemy color", ref enemyColor);
 
             }
+            if (ImGui.CollapsingHeader("Weapon Name Color"))
+            {
+                ImGui.ColorPicker4("##Weapon Name color", ref WeaponNameColor);
+
+            }
             DrawOverlay(screensize);
             drawList = ImGui.GetWindowDrawList();
             if (enableESP == true)
@@ -78,6 +86,7 @@ namespace basicESP
                         DrawBox(entity);
                         if (enableLine == true) DrawLine(entity);
                         NameEsp(entity, 15);
+                        WeaponName(entity, 15);
 
                     }
 
@@ -98,7 +107,9 @@ namespace basicESP
         {
             if (enableHealbar == true)
             {
-                float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
+                if (localPlayer.team != entity.team)
+                { 
+                    float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
 
                 float boxLeft = entity.viewPosition2D.X - entityHeight / 3;
                 float boxRight = entity.position2D.X + entityHeight / 3;
@@ -113,6 +124,7 @@ namespace basicESP
 
                 Vector4 barColor = GetHealthColor(entity.health);
                 drawList.AddRectFilled(barTop, barBottom, ImGui.ColorConvertFloat4ToU32(barColor));
+                }
             }
 
 
@@ -153,8 +165,8 @@ namespace basicESP
                 else
                 {
                     float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
-                    Vector2 recTop = new Vector2(entity.viewPosition2D.X - entityHeight / 3, entity.viewPosition2D.Y);
-                    Vector2 rectBottom = new Vector2(entity.position2D.X + entityHeight / 3, entity.position2D.Y);
+                    Vector2 recTop = new Vector2(entity.viewPosition2D.X - entityHeight / 4, entity.viewPosition2D.Y);
+                    Vector2 rectBottom = new Vector2(entity.position2D.X + entityHeight / 4, entity.position2D.Y);
                     drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
                 }
             }
@@ -166,45 +178,63 @@ namespace basicESP
                 }
 
                 float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
-                Vector2 recTop = new Vector2(entity.viewPosition2D.X - entityHeight / 3f, entity.viewPosition2D.Y);
-                Vector2 rectBottom = new Vector2(entity.position2D.X + entityHeight / 3f, entity.position2D.Y);
+                Vector2 recTop = new Vector2(entity.viewPosition2D.X - entityHeight / 4f, entity.viewPosition2D.Y);
+                Vector2 rectBottom = new Vector2(entity.position2D.X + entityHeight / 4f, entity.position2D.Y);
                 drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
             }
         }
+        private void WeaponName(Entity entity, int offset)
+        {
+            if (enableName == true && enableWeaponName == true)
+            {
+                if (localPlayer.team != entity.team)
+                {
+                    var io = ImGui.GetIO();
+                    string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
+                    float fontSize = 11.0f;
+                    ImFontPtr myCustomFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize);
+
+                    float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
+                    float boxWidth = entityHeight / 4;
+
+                    Vector2 weaponPosition = new Vector2(entity.viewPosition2D.X - boxWidth - 5, entity.position2D.Y + 2); // 2 پیکسل برای چسبیدن به پایین باکس
+                    drawList.AddText(myCustomFont, fontSize, weaponPosition, ImGui.ColorConvertFloat4ToU32(WeaponNameColor), $"{entity.currentWeaponName}");
+                }
+            }
+        }
+
+
 
         private void NameEsp(Entity entity, int offset)
         {
             if (enableName == true && enableteam == true && localPlayer.team == entity.team)
             {
                 var io = ImGui.GetIO();
-
                 string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
-
-                float fontSize = 14.0f;
-
+                float fontSize = 11.0f;
                 ImFontPtr myCustomFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize);
 
+                float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
+                float boxWidth = entityHeight / 4;
 
-                Vector2 namepossition = new Vector2(entity.viewPosition2D.X - 10, entity.viewPosition2D.Y - offset);
+                Vector2 namepossition = new Vector2(entity.viewPosition2D.X - boxWidth - 5, entity.viewPosition2D.Y - offset);
                 drawList.AddText(myCustomFont, fontSize, namepossition, ImGui.ColorConvertFloat4ToU32(nameColor), $"{entity.name}");
-
             }
             else if (localPlayer.team != entity.team)
             {
                 var io = ImGui.GetIO();
-
                 string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
-
-                float fontSize = 14.0f;
-
+                float fontSize = 11.0f;
                 ImFontPtr myCustomFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize);
 
+                float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
+                float boxWidth = entityHeight / 4;
 
-                Vector2 namepossition = new Vector2(entity.viewPosition2D.X - 10, entity.viewPosition2D.Y - offset);
+                Vector2 namepossition = new Vector2(entity.viewPosition2D.X - boxWidth - 5, entity.viewPosition2D.Y - offset);
                 drawList.AddText(myCustomFont, fontSize, namepossition, ImGui.ColorConvertFloat4ToU32(nameColor), $"{entity.name}");
             }
-
         }
+
         private void DrawLine(Entity entity)
         {
             if (enableteam == true && localPlayer.team == entity.team)
