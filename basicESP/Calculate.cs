@@ -20,6 +20,9 @@ namespace basicESP
                 float X = (windowSize.X /2  ) + (windowSize.X / 2) * screenX  / screenW;
                 float Y = (windowSize.Y / 2) - (windowSize.Y / 2) * screenY / screenW;
 
+
+                //sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+
                 return new Vector2(X, Y);
             }
             else
