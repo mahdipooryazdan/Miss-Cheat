@@ -8,7 +8,6 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace basicESP
 {
     public class Renderer : Overlay
@@ -87,7 +86,7 @@ namespace basicESP
         }
         bool EntityOnScreen(Entity entity)
         {
-            if (entity.position2D.X > 0 && entity.position2D.X < screensize.X && entity.position2D.Y > 0 && entity.position2D.Y < screensize.Y)
+            if (entity.position2D.X > 0 && entity.position2D.X < screensize.X && entity.position2D.Y > 0)
             {
                 return true;
 
@@ -97,7 +96,7 @@ namespace basicESP
 
         private void DrawHealthBar(Entity entity)
         {
-            if (enableHealbar == true )
+            if (enableHealbar == true)
             {
                 float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
 
@@ -121,9 +120,9 @@ namespace basicESP
 
         private Vector4 GetHealthColor(float health)
         {
-            float normalizedHealth = health / 100f; 
+            float normalizedHealth = health / 100f;
             float red = 1.0f - normalizedHealth;
-            float green = normalizedHealth; 
+            float green = normalizedHealth;
 
             return new Vector4(red, green, 0.0f, 1.0f);
         }
@@ -134,7 +133,7 @@ namespace basicESP
         {
             Vector4 boxColor;
 
-            if (enableHealbox==true)
+            if (enableHealbox == true)
             {
                 boxColor = GetHealthColor(entity.health);
             }
@@ -167,8 +166,8 @@ namespace basicESP
                 }
 
                 float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
-                Vector2 recTop = new Vector2(entity.viewPosition2D.X - entityHeight / 3.2f, entity.viewPosition2D.Y);
-                Vector2 rectBottom = new Vector2(entity.position2D.X + entityHeight / 3.2f, entity.position2D.Y);
+                Vector2 recTop = new Vector2(entity.viewPosition2D.X - entityHeight / 3f, entity.viewPosition2D.Y);
+                Vector2 rectBottom = new Vector2(entity.position2D.X + entityHeight / 3f, entity.position2D.Y);
                 drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
             }
         }
@@ -177,20 +176,30 @@ namespace basicESP
         {
             if (enableName == true && enableteam == true && localPlayer.team == entity.team)
             {
-                Vector2 namepossition = new Vector2(entity.viewPosition2D.X - 10, entity.viewPosition2D.Y - offset);
-                drawList.AddText(namepossition, ImGui.ColorConvertFloat4ToU32(nameColor), $"{entity.name}");
-
-            }else if (localPlayer.team != entity.team)
-            {
                 var io = ImGui.GetIO();
 
-                string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "QwitcherGrypen-Regular.ttf");
+                string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
 
-                float fontSize = 12.0f;
+                float fontSize = 14.0f;
 
                 ImFontPtr myCustomFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize);
 
-               
+
+                Vector2 namepossition = new Vector2(entity.viewPosition2D.X - 10, entity.viewPosition2D.Y - offset);
+                drawList.AddText(myCustomFont, fontSize, namepossition, ImGui.ColorConvertFloat4ToU32(nameColor), $"{entity.name}");
+
+            }
+            else if (localPlayer.team != entity.team)
+            {
+                var io = ImGui.GetIO();
+
+                string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
+
+                float fontSize = 14.0f;
+
+                ImFontPtr myCustomFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize);
+
+
                 Vector2 namepossition = new Vector2(entity.viewPosition2D.X - 10, entity.viewPosition2D.Y - offset);
                 drawList.AddText(myCustomFont, fontSize, namepossition, ImGui.ColorConvertFloat4ToU32(nameColor), $"{entity.name}");
             }

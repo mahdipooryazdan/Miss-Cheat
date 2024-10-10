@@ -9,19 +9,16 @@ namespace basicESP
 {
     public static class Calculate
     {
-        public static Vector2 WorldToScreen(float[] matrix ,Vector3 pos ,Vector2 windowSize)
+        public static Vector2 WorldToScreen(float[] matrix, Vector3 pos, Vector2 windowSize)
         {
-            float screenW = (matrix[12] *  pos.X) + (matrix[13] * pos.Y) + (matrix[14] * pos.Z) + matrix[15] ;
+            float screenW = (matrix[12] * pos.X) + (matrix[13] * pos.Y) + (matrix[14] * pos.Z) + matrix[15];
             if (screenW > 0.001f)
             {
-                float screenX = (matrix[0] * pos.X) + (matrix[1] * pos.Y) + (matrix[2] * pos.Z) + matrix[3]; 
+                float screenX = (matrix[0] * pos.X) + (matrix[1] * pos.Y) + (matrix[2] * pos.Z) + matrix[3];
                 float screenY = (matrix[4] * pos.X) + (matrix[5] * pos.Y) + (matrix[6] * pos.Z) + matrix[7];
 
-                float X = (windowSize.X /2  ) + (windowSize.X / 2) * screenX  / screenW;
+                float X = (windowSize.X / 2) + (windowSize.X / 2) * screenX / screenW;
                 float Y = (windowSize.Y / 2) - (windowSize.Y / 2) * screenY / screenW;
-
-
-                //sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 
                 return new Vector2(X, Y);
             }

@@ -48,16 +48,18 @@ while (true)
 
         if (lifeState != 256) continue;
 
-        float[] viewMatrix = swed.ReadMatrix(client + dwViewMatrix );
+        float heightOffset = 12;
+        float[] viewMatrix = swed.ReadMatrix(client + dwViewMatrix);
         Entity entity = new Entity();
         entity.team = swed.ReadInt(currentPawn, m_iTeamNum);
         entity.health = swed.ReadInt(currentPawn, m_iHealth);
 
         entity.position = swed.ReadVec(currentPawn, m_vOldOrigin);
-        entity.viewoffset = swed.ReadVec(currentPawn,m_vecViewOffset);
+        entity.viewoffset = swed.ReadVec(currentPawn, m_vecViewOffset);
+        Vector3 aboveHeadPosition = new Vector3(entity.position.X, entity.position.Y, entity.position.Z + heightOffset);
         entity.position2D = Calculate.WorldToScreen(viewMatrix, entity.position, screenSize);
         entity.name = swed.ReadString(currentController, m_iszPlayerName, 16).Split("\0")[0];
-        entity.viewPosition2D = Calculate.WorldToScreen(viewMatrix,Vector3.Add(entity.position,entity.viewoffset),screenSize);  
+        entity.viewPosition2D = Calculate.WorldToScreen(viewMatrix, Vector3.Add(aboveHeadPosition, entity.viewoffset), screenSize);
         entities.Add(entity);
 
 
