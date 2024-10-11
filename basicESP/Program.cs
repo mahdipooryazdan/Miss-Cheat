@@ -86,10 +86,13 @@ class Program
                 entity.viewPosition2D = Calculate.WorldToScreen(viewMatrix, Vector3.Add(aboveHeadPosition, entity.viewoffset), screenSize);
                 entities.Add(entity);
                 Console.WriteLine($"ent : {entity.currentWeaponName}");
+                renderer.UpdateEntites(entities);
+
+
             }
             renderer.UpdateLocalPlayer(localPlayer);
-            renderer.UpdateEntites(entities);
-            Thread.Sleep(5);
+
+            Thread.Sleep(2);
             Console.Clear();
         }
     }
