@@ -111,8 +111,8 @@ namespace basicESP
                 {
                     float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
 
-                    float boxLeft = entity.viewPosition2D.X - entityHeight / 3;
-                    float boxRight = entity.position2D.X + entityHeight / 3;
+                    float boxLeft = entity.viewPosition2D.X - entityHeight / 4;
+                    float boxRight = entity.position2D.X + entityHeight / 4;
 
                     float barPercentWidth = 0.03f;
                     float barPixelWidth = barPercentWidth * (boxRight - boxLeft);
@@ -129,8 +129,8 @@ namespace basicESP
                 {
                     float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
 
-                    float boxLeft = entity.viewPosition2D.X - entityHeight / 3;
-                    float boxRight = entity.position2D.X + entityHeight / 3;
+                    float boxLeft = entity.viewPosition2D.X - entityHeight / 4;
+                    float boxRight = entity.position2D.X + entityHeight / 4;
 
                     float barPercentWidth = 0.03f;
                     float barPixelWidth = barPercentWidth * (boxRight - boxLeft);
