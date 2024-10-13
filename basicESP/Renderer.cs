@@ -35,10 +35,14 @@ namespace basicESP
         private bool enableHealbar = false;
         private bool enableHealbox = false;
         private bool enableWeaponName = false;
+        public bool bombPlanted =false;
+        public double timeLeft = -1;
         private Vector4 enemyColor = new Vector4(1, 0, 0, 1);
         private Vector4 teamColor = new Vector4(0, 1, 0, 1);
         private Vector4 nameColor = new Vector4(1, 1, 1, 1);
         private Vector4 WeaponNameColor = new Vector4(1, 1, 1, 1);
+        private Vector4 C4ColorRed = new Vector4(1, 0, 0, 1);
+        private Vector4 C4ColorGreen = new Vector4(0, 1, 0, 1);
 
 
         ImDrawListPtr drawList;
@@ -73,6 +77,21 @@ namespace basicESP
                 ImGui.ColorPicker4("##Weapon Name color", ref WeaponNameColor);
 
             }
+
+            ImGui.Begin("Bomb timer");
+            if (bombPlanted)
+            {
+                ImGui.TextColored(C4ColorRed, "Bomb Planted");
+                ImGui.Text($"Seconds Before Detonation: {timeLeft}");
+            }
+            else
+            {
+                ImGui.TextColored(C4ColorGreen, "Bomb Not Planted");
+            }
+
+
+
+
             DrawOverlay(screensize);
             drawList = ImGui.GetWindowDrawList();
             if (enableESP == true)
@@ -101,6 +120,20 @@ namespace basicESP
 
             }
             return false;
+        }
+
+        public void c4Position(Vector2 bombPosition)
+        {
+            if (bombPlanted)
+            {
+                float bombMarkerSize = 5.0f;
+                Vector4 bombMarkerColor = C4ColorRed;
+                
+                if (bombPosition != Vector2.Zero) 
+                {
+                    drawList.AddCircleFilled(bombPosition, bombMarkerSize, ImGui.ColorConvertFloat4ToU32(bombMarkerColor));
+                }
+            }
         }
 
         private void DrawHealthBar(Entity entity)
