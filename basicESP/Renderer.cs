@@ -1,5 +1,6 @@
 ﻿using ClickableTransparentOverlay;
 using ImGuiNET;
+using SixLabors.ImageSharp.Metadata;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -35,15 +36,13 @@ namespace basicESP
         private bool enableHealbar = false;
         private bool enableHealbox = false;
         private bool enableWeaponName = false;
-        public bool bombPlanted =false;
-        public double timeLeft = -1;
         private Vector4 enemyColor = new Vector4(1, 0, 0, 1);
         private Vector4 teamColor = new Vector4(0, 1, 0, 1);
         private Vector4 nameColor = new Vector4(1, 1, 1, 1);
         private Vector4 WeaponNameColor = new Vector4(1, 1, 1, 1);
-        private Vector4 C4ColorRed = new Vector4(1, 0, 0, 1);
-        private Vector4 C4ColorGreen = new Vector4(0, 1, 0, 1);
+        private Vector4 boneColor = new Vector4(1, 1, 1, 1);
 
+        float boneThickness = 4;
 
         ImDrawListPtr drawList;
         protected override void Render()
@@ -77,21 +76,11 @@ namespace basicESP
                 ImGui.ColorPicker4("##Weapon Name color", ref WeaponNameColor);
 
             }
-
-            ImGui.Begin("Bomb timer");
-            if (bombPlanted)
+            if (ImGui.CollapsingHeader("bone Color"))
             {
-                ImGui.TextColored(C4ColorRed, "Bomb Planted");
-                ImGui.Text($"Seconds Before Detonation: {timeLeft}");
+                ImGui.ColorPicker4("##bonecolor", ref boneColor);
+
             }
-            else
-            {
-                ImGui.TextColored(C4ColorGreen, "Bomb Not Planted");
-            }
-
-
-
-
             DrawOverlay(screensize);
             drawList = ImGui.GetWindowDrawList();
             if (enableESP == true)
@@ -101,7 +90,7 @@ namespace basicESP
                     if (EntityOnScreen(entity))
                     {
                         DrawHealthBar(entity);
-
+                        DrawBones(entity);
                         DrawBox(entity);
                         if (enableLine == true) DrawLine(entity);
                         NameEsp(entity, 15);
@@ -121,21 +110,27 @@ namespace basicESP
             }
             return false;
         }
-
-        public void c4Position(Vector2 bombPosition)
+        private void DrawBones(Entity entity) 
         {
-            if (bombPlanted)
-            {
-                float bombMarkerSize = 5.0f;
-                Vector4 bombMarkerColor = C4ColorRed;
-                
-                if (bombPosition != Vector2.Zero) 
-                {
-                    drawList.AddCircleFilled(bombPosition, bombMarkerSize, ImGui.ColorConvertFloat4ToU32(bombMarkerColor));
-                }
-            }
-        }
+            uint uintColor = ImGui.ColorConvertFloat4ToU32(boneColor);
+            float currentBoneThickness = boneThickness / entity.distance;
 
+            drawList.AddLine(entity.bones2d[1], entity.bones2d[2], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[1], entity.bones2d[3], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[1], entity.bones2d[6], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[3], entity.bones2d[4], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[6], entity.bones2d[7], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[4], entity.bones2d[5], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[7], entity.bones2d[8], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[1], entity.bones2d[0], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[0], entity.bones2d[9], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[0], entity.bones2d[11], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[9], entity.bones2d[10], uintColor, currentBoneThickness);
+            drawList.AddLine(entity.bones2d[11], entity.bones2d[12], uintColor, currentBoneThickness);
+            drawList.AddCircle(entity.bones2d[2],3+ currentBoneThickness,uintColor);
+
+
+        }
         private void DrawHealthBar(Entity entity)
         {
             if (enableHealbar == true)
