@@ -9,6 +9,8 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 namespace basicESP
 {
     public class Renderer : Overlay
@@ -39,6 +41,8 @@ namespace basicESP
         public bool bombPlanted =false;
         public bool enableBone = false;
         public double timeLeft = -1;
+
+        public Vector2 c4Pos2D = Vector2.Zero;
         private Vector4 enemyColor = new Vector4(1, 0, 0, 1);
         private Vector4 teamColor = new Vector4(0, 1, 0, 1);
         private Vector4 nameColor = new Vector4(1, 1, 1, 1);
@@ -116,8 +120,8 @@ namespace basicESP
                         if (enableLine == true) DrawLine(entity);
                         NameEsp(entity, 15);
                         WeaponName(entity, 15);
-
                     }
+                    c4Position();
 
                 }
             }
@@ -181,16 +185,16 @@ namespace basicESP
             }
         }
 
-        public void c4Position(Vector2 bombPosition)
+        public void c4Position()
         {
             if (bombPlanted)
             {
                 float bombMarkerSize = 5.0f;
                 Vector4 bombMarkerColor = C4ColorRed;
-                
-                if (bombPosition != Vector2.Zero) 
+
+                if (c4Pos2D != Vector2.Zero)
                 {
-                    drawList.AddCircleFilled(bombPosition, bombMarkerSize, ImGui.ColorConvertFloat4ToU32(bombMarkerColor));
+                    drawList.AddCircleFilled(c4Pos2D, bombMarkerSize, ImGui.ColorConvertFloat4ToU32(bombMarkerColor));
                 }
             }
         }

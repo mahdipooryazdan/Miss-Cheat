@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ImGuiNET;
+using System.Timers;
 
 class Program
 {
@@ -81,22 +82,19 @@ class Program
                     Vector3 c4Origin = swed.ReadVec(c4Node, m_vecAbsOrigin);
 
                     float[] viewMatrix = swed.ReadMatrix(clientBase + dwViewMatrix);
-                    Vector2 c4Pos2D = Calculate.WorldToScreen(viewMatrix, c4Origin, screenSize);
+                    Vector2 calculatedC4Pos2D = Calculate.WorldToScreen(viewMatrix, c4Origin, screenSize);
 
-                    if (c4Pos2D.X >= 0 && c4Pos2D.Y >= 0 && c4Pos2D.X <= screenSize.X && c4Pos2D.Y <= screenSize.Y)
-                    {
-                        renderer.c4Position(c4Pos2D);
-                    }
-
-
+                    renderer.c4Pos2D = calculatedC4Pos2D;
                 }
+
+                renderer.bombPlanted = bombPlanted;
 
                 if (bombPlanted && (bombTimerTask == null || bombTimerTask.IsCompleted))
                 {
                     bombTimerTask = Task.Run(() =>
                     {
-                        double timeLeft = 40.0;
-                        for (int i = 0; i < 400; i++)
+                        double timeLeft = 40.0; 
+                        for (int i = 0; i < 400; i++) 
                         {
                             bombPlanted = swed.ReadBool(gameRules, m_bBombPlanted);
                             if (!bombPlanted)
@@ -117,8 +115,8 @@ class Program
                     renderer.timeLeft = -1;
                     renderer.bombPlanted = false;
                 }
-
             }
+
 
             entities.Clear();
             IntPtr entityList = swed.ReadPointer(clientBase, dwEntityList);

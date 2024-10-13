@@ -26,7 +26,6 @@ namespace basicESP
         public float distance { get; set; }
     }
 
-
     public enum BoneIds
     {
         Waist = 0,
