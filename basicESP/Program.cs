@@ -48,6 +48,8 @@ class Program
         int m_AttributeManager = clientDll.ContainsKey("C_EconEntity.m_AttributeManager")? clientDll["C_EconEntity.m_AttributeManager"]: 0x1140;
         int m_iHealth = clientDll.ContainsKey("m_iHealth") ? clientDll["m_iHealth"] : 0x344;
 
+        int m_modelState = 0x170; // CModelState
+        int m_pGameSceneNode = 0x328; // CGameSceneNode*
         while (true)
         {
             entities.Clear();
@@ -74,6 +76,10 @@ class Program
 
                 float heightOffset = 12;
                 float[] viewMatrix = swed.ReadMatrix(clientBase + dwViewMatrix);
+
+                IntPtr sceneNode = swed.ReadPointer(currentPawn, m_pGameSceneNode);
+                IntPtr boneMatrix = swed.ReadPointer(sceneNode, m_modelState + 0x80);
+
                 Entity entity = new Entity();
                 entity.team = swed.ReadInt(currentPawn, m_iTeamNum);
                 entity.health = swed.ReadInt(currentPawn, m_iHealth);
@@ -84,16 +90,21 @@ class Program
                 entity.currentWeaponName = Enum.GetName(typeof(Weapon), WeaponDefinitionIndex);
                 entity.name = swed.ReadString(currentController, m_iszPlayerName, 16).Split("\0")[0];
                 entity.viewPosition2D = Calculate.WorldToScreen(viewMatrix, Vector3.Add(aboveHeadPosition, entity.viewoffset), screenSize);
+                
+                entity.distance = Vector3.Distance(entity.position,localPlayer.position);
+                entity.bones = Calculate.ReadBones(boneMatrix,swed);
+                entity.bones2d = Calculate.ReadBones2d(entity.bones,viewMatrix,screenSize);
+                
                 entities.Add(entity);
                 Console.WriteLine($"ent : {entity.currentWeaponName}");
-                renderer.UpdateEntites(entities);
 
 
             }
             renderer.UpdateLocalPlayer(localPlayer);
+            renderer.UpdateEntites(entities);
 
-            Thread.Sleep(2);
-            Console.Clear();
+            Thread.Sleep((int)0.1f);
+            //Console.Clear();
         }
     }
     //Offset
