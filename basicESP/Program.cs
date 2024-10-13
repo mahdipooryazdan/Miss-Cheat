@@ -47,15 +47,10 @@ class Program
         int m_iItemDefinitionIndex = clientDll.ContainsKey("m_iItemDefinitionIndex") ? clientDll["m_iItemDefinitionIndex"] : 0x1BA;
         int m_AttributeManager = clientDll.ContainsKey("C_EconEntity.m_AttributeManager")? clientDll["C_EconEntity.m_AttributeManager"]: 0x1140;
         int m_iHealth = clientDll.ContainsKey("m_iHealth") ? clientDll["m_iHealth"] : 0x344;
-
-        int m_bBombPlanted = clientDll.ContainsKey("C_CSGameRules.m_bBombPlanted") ? clientDll["C_CSGameRules.m_bBombPlanted"] : 0x9A5;
-        int m_pGameSceneNode = clientDll.ContainsKey("m_pGameSceneNode") ? clientDll["m_pGameSceneNode"] : 0x328;
-        int m_vecAbsOrigin = clientDll.ContainsKey("m_vecAbsOrigin") ? clientDll["m_vecAbsOrigin"] : 0xD0;
-
-
-        bool bombPlanted = false;
-        Task bombTimerTask = null;
-
+        int m_modelState = clientDll.ContainsKey("CSkeletonInstance.m_modelState") ? clientDll["CSkeletonInstance.m_modelState"] : 0x170; 
+        int m_pGameSceneNode = clientDll.ContainsKey("m_pGameSceneNode") ? clientDll["m_pGameSceneNode"] : 0x328; 
+        //int m_modelState = 0x170; // CModelState
+        //int m_pGameSceneNode = 0x328; // CGameSceneNode*
         while (true)
         {
             entities.Clear();
@@ -83,6 +78,9 @@ class Program
                 float heightOffset = 12;
                 float[] viewMatrix = swed.ReadMatrix(clientBase + dwViewMatrix);
 
+                IntPtr sceneNode = swed.ReadPointer(currentPawn, m_pGameSceneNode);
+                IntPtr boneMatrix = swed.ReadPointer(sceneNode, m_modelState + 0x80);
+
                 Entity entity = new Entity();
                 entity.team = swed.ReadInt(currentPawn, m_iTeamNum);
                 entity.health = swed.ReadInt(currentPawn, m_iHealth);
@@ -93,11 +91,21 @@ class Program
                 entity.currentWeaponName = Enum.GetName(typeof(Weapon), WeaponDefinitionIndex);
                 entity.name = swed.ReadString(currentController, m_iszPlayerName, 16).Split("\0")[0];
                 entity.viewPosition2D = Calculate.WorldToScreen(viewMatrix, Vector3.Add(aboveHeadPosition, entity.viewoffset), screenSize);
+                
+                entity.distance = Vector3.Distance(entity.position,localPlayer.position);
+                entity.bones = Calculate.ReadBones(boneMatrix,swed);
+                entity.bones2d = Calculate.ReadBones2d(entity.bones,viewMatrix,screenSize);
+                
                 entities.Add(entity);
-                renderer.UpdateEntites(entities);
+                Console.WriteLine($"ent : {entity.currentWeaponName}");
 
+
+            }
             renderer.UpdateLocalPlayer(localPlayer);
-            Thread.Sleep(2);
+            renderer.UpdateEntites(entities);
+
+            Thread.Sleep((int)0.1f);
+            //Console.Clear();
         }
     }
     //Offset
