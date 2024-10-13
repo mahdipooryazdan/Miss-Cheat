@@ -35,6 +35,7 @@ class Program
         int dwEntityList = offsets.ContainsKey("dwEntityList") ? offsets["dwEntityList"] : 0x19BDE30;
         int dwViewMatrix = offsets.ContainsKey("dwViewMatrix") ? offsets["dwViewMatrix"] : 0x1A1FF40;
         int dwLocalPlayerPawn = offsets.ContainsKey("dwLocalPlayerPawn") ? offsets["dwLocalPlayerPawn"] : 0x1825138;
+        int dwLocalPlayerController = offsets.ContainsKey("dwLocalPlayerController") ? offsets["dwLocalPlayerController"] : 0x1A0D8E8;
         int dwGameRules = offsets.ContainsKey("dwGameRules") ? offsets["dwGameRules"] : 0x1A1B848;
         int dwPlantedC4 = offsets.ContainsKey("dwPlantedC4") ? offsets["dwPlantedC4"] : 0x1A24078;
 
@@ -51,7 +52,7 @@ class Program
         int m_iItemDefinitionIndex = clientDll.ContainsKey("m_iItemDefinitionIndex") ? clientDll["m_iItemDefinitionIndex"] : 0x1BA;
         int m_AttributeManager = clientDll.ContainsKey("C_EconEntity.m_AttributeManager")? clientDll["C_EconEntity.m_AttributeManager"]: 0x1140;
         int m_iHealth = clientDll.ContainsKey("m_iHealth") ? clientDll["m_iHealth"] : 0x344;
-        int m_modelState = clientDll.ContainsKey("CSkeletonInstance.m_modelState") ? clientDll["CSkeletonInstance.m_modelState"] : 0x170; 
+        int m_modelState = clientDll.ContainsKey("CSkeletonInstance.m_modelState") ? clientDll["CSkeletonInstance.m_modelState"] : 0x170;
 
         //int m_modelState = 0x170; // CModelState
         //int m_pGameSceneNode = 0x328; // CGameSceneNode*
@@ -90,7 +91,6 @@ class Program
 
                 }
 
-                // مدیریت زمان بمب
                 if (bombPlanted && (bombTimerTask == null || bombTimerTask.IsCompleted))
                 {
                     bombTimerTask = Task.Run(() =>
@@ -124,8 +124,9 @@ class Program
             IntPtr entityList = swed.ReadPointer(clientBase, dwEntityList);
             IntPtr listEntry = swed.ReadPointer(entityList, 0x10);
             IntPtr localPlayerPawn = swed.ReadPointer(clientBase, dwLocalPlayerPawn);
-            localPlayer.team = swed.ReadInt(localPlayerPawn, m_iTeamNum);
+            IntPtr localPlayercontrol = swed.ReadPointer(clientBase, dwLocalPlayerController);
 
+            localPlayer.team = swed.ReadInt(localPlayerPawn, m_iTeamNum);
             for (int i = 0; i < 64; i++)
             {
                 IntPtr currentController = swed.ReadPointer(listEntry, i * 0x78);
@@ -160,13 +161,12 @@ class Program
                 entity.currentWeaponName = Enum.GetName(typeof(Weapon), WeaponDefinitionIndex);
                 entity.name = swed.ReadString(currentController, m_iszPlayerName, 16).Split("\0")[0];
                 entity.viewPosition2D = Calculate.WorldToScreen(viewMatrix, Vector3.Add(aboveHeadPosition, entity.viewoffset), screenSize);
-
                 entity.distance = Vector3.Distance(entity.position, localPlayer.position);
+                entity.localPlayercontrol = swed.ReadString(localPlayercontrol, m_iszPlayerName, 16).Split("\0")[0];
                 entity.bones = Calculate.ReadBones(boneMatrix, swed);
                 entity.bones2d = Calculate.ReadBones2d(entity.bones, viewMatrix, screenSize);
 
                 entities.Add(entity);
-                Console.WriteLine($"ent : {entity.currentWeaponName}");
 
 
             }
@@ -174,7 +174,6 @@ class Program
             renderer.UpdateEntites(entities);
 
             Thread.Sleep((int)0.1f);
-            //Console.Clear();
 
         
 

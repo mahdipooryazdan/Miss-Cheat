@@ -37,6 +37,7 @@ namespace basicESP
         private bool enableHealbox = false;
         private bool enableWeaponName = false;
         public bool bombPlanted =false;
+        public bool enableBone = false;
         public double timeLeft = -1;
         private Vector4 enemyColor = new Vector4(1, 0, 0, 1);
         private Vector4 teamColor = new Vector4(0, 1, 0, 1);
@@ -59,6 +60,7 @@ namespace basicESP
             ImGui.Checkbox("Enable Heal Bar", ref enableHealbar);
             ImGui.Checkbox("Enable Heal Box", ref enableHealbox);
             ImGui.Checkbox("Enable Weapon Name", ref enableWeaponName);
+            ImGui.Checkbox("Enable Bone", ref enableBone);
 
             if (ImGui.CollapsingHeader("Team Color"))
             {
@@ -131,24 +133,52 @@ namespace basicESP
         }
         private void DrawBones(Entity entity) 
         {
-            uint uintColor = ImGui.ColorConvertFloat4ToU32(boneColor);
-            float currentBoneThickness = boneThickness / entity.distance;
+            if (enableBone == true)
+            {
+                if (localPlayer.team != entity.team)
+                {
+                    uint uintColor = ImGui.ColorConvertFloat4ToU32(boneColor);
+                    float currentBoneThickness = boneThickness / entity.distance;
 
-            drawList.AddLine(entity.bones2d[1], entity.bones2d[2], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[1], entity.bones2d[3], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[1], entity.bones2d[6], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[3], entity.bones2d[4], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[6], entity.bones2d[7], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[4], entity.bones2d[5], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[7], entity.bones2d[8], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[1], entity.bones2d[0], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[0], entity.bones2d[9], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[0], entity.bones2d[11], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[9], entity.bones2d[10], uintColor, currentBoneThickness);
-            drawList.AddLine(entity.bones2d[11], entity.bones2d[12], uintColor, currentBoneThickness);
-            drawList.AddCircle(entity.bones2d[2],3+ currentBoneThickness,uintColor);
+                    drawList.AddLine(entity.bones2d[1], entity.bones2d[2], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[1], entity.bones2d[3], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[1], entity.bones2d[6], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[3], entity.bones2d[4], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[6], entity.bones2d[7], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[4], entity.bones2d[5], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[7], entity.bones2d[8], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[1], entity.bones2d[0], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[0], entity.bones2d[9], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[0], entity.bones2d[11], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[9], entity.bones2d[10], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[11], entity.bones2d[12], uintColor, currentBoneThickness);
+                    drawList.AddCircle(entity.bones2d[2], 3 + currentBoneThickness, uintColor);
+                }
+                if (localPlayer.team == entity.team && enableteam==true)
+                {
+                    if(entity.localPlayercontrol==entity.name)
+                    {
+                        return;
+                    }
+                    uint uintColor = ImGui.ColorConvertFloat4ToU32(boneColor);
+                    float currentBoneThickness = boneThickness / entity.distance;
 
-
+                    drawList.AddLine(entity.bones2d[1], entity.bones2d[2], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[1], entity.bones2d[3], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[1], entity.bones2d[6], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[3], entity.bones2d[4], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[6], entity.bones2d[7], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[4], entity.bones2d[5], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[7], entity.bones2d[8], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[1], entity.bones2d[0], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[0], entity.bones2d[9], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[0], entity.bones2d[11], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[9], entity.bones2d[10], uintColor, currentBoneThickness);
+                    drawList.AddLine(entity.bones2d[11], entity.bones2d[12], uintColor, currentBoneThickness);
+                    drawList.AddCircle(entity.bones2d[2], 3 + currentBoneThickness, uintColor);
+                    
+                }
+            }
         }
 
         public void c4Position(Vector2 bombPosition)
@@ -173,10 +203,10 @@ namespace basicESP
                 {
                     float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
 
-                    float boxLeft = entity.viewPosition2D.X - entityHeight / 4;
+                    float boxLeft = entity.viewPosition2D.X - entityHeight / 4 ;
                     float boxRight = entity.position2D.X + entityHeight / 4;
 
-                    float barPercentWidth = 0.03f;
+                    float barPercentWidth = 0.06f;
                     float barPixelWidth = barPercentWidth * (boxRight - boxLeft);
 
                     float barHeight = entityHeight * (entity.health / 100f);
@@ -187,8 +217,12 @@ namespace basicESP
                     Vector4 barColor = GetHealthColor(entity.health);
                     drawList.AddRectFilled(barTop, barBottom, ImGui.ColorConvertFloat4ToU32(barColor));
                 }
-                if (localPlayer.team != entity.team)
+                if (localPlayer.team == entity.team && enableteam == true)
                 {
+                    if (entity.localPlayercontrol == entity.name)
+                    {
+                        return;
+                    }
                     float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
 
                     float boxLeft = entity.viewPosition2D.X - entityHeight / 4;
@@ -237,8 +271,7 @@ namespace basicESP
             if (enableteam && localPlayer.team == entity.team)
             {
                 if (entity.viewPosition2D == new Vector2(0, 0)) return;
-
-                if (localPlayer.name == entity.name)
+                if (entity.localPlayercontrol == entity.name)
                 {
                     return;
                 }
@@ -282,6 +315,10 @@ namespace basicESP
                 }
                 if (enableteam == true && localPlayer.team == entity.team)
                 {
+                    if (entity.localPlayercontrol == entity.name)
+                    {
+                        return;
+                    }
                     var io = ImGui.GetIO();
                     string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
                     float fontSize = 11.0f;
@@ -302,6 +339,10 @@ namespace basicESP
         {
             if (enableName == true && enableteam == true && localPlayer.team == entity.team)
             {
+                if (entity.localPlayercontrol == entity.name)
+                {
+                    return;
+                }
                 var io = ImGui.GetIO();
                 string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
                 float fontSize = 11.0f;
@@ -332,6 +373,10 @@ namespace basicESP
         {
             if (enableteam == true && localPlayer.team == entity.team)
             {
+                if (entity.localPlayercontrol == entity.name)
+                {
+                    return;
+                }
                 Vector4 lineColor = localPlayer.team == entity.team ? teamColor : enemyColor;
                 drawList.AddLine(new Vector2(screensize.X / 2, screensize.Y), entity.position2D, ImGui.ColorConvertFloat4ToU32(lineColor));
             }

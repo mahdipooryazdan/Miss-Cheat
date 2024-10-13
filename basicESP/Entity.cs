@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,6 +19,8 @@ namespace basicESP
         public int team { get; set; }
         public string name { get; set; }
         public int health { get; set; }
+
+        public string localPlayercontrol { get; set; }
         public short weaponIndex { get; set; }
         public string currentWeaponName { get; set; }
         public float distance { get; set; }
