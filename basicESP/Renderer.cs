@@ -19,7 +19,7 @@ namespace basicESP
         static extern int GetSystemMetrics(int nIndex);
 
         float screenWidth = GetSystemMetrics(0);
-
+        FileLoadException alires;
         float screenHeight = GetSystemMetrics(1);
         public Vector2 screensize;
         public Renderer()
@@ -101,7 +101,9 @@ namespace basicESP
 
             DrawOverlay(screensize);
             drawList = ImGui.GetWindowDrawList();
-            if (enableESP == true)
+
+
+                if (enableESP == true)
             {
                 foreach (var entity in entities)
                 {
