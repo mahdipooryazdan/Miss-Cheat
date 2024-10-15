@@ -161,6 +161,12 @@ class Program
                 entity.viewPosition2D = Calculate.WorldToScreen(viewMatrix, Vector3.Add(aboveHeadPosition, entity.viewoffset), screenSize);
                 entity.distance = Vector3.Distance(entity.position, localPlayer.position);
                 entity.localPlayercontrol = swed.ReadString(localPlayercontrol, m_iszPlayerName, 16).Split("\0")[0];
+
+                String name2 = swed.ReadString(currentController, m_iszPlayerName, 16);
+                bool spoted = swed.ReadBool(currentPawn, m_entitySpottedState + m_bSpotted);
+                swed.WriteBool(currentPawn, m_entitySpottedState + m_bSpotted,true);
+                String spottedStatus = spoted == true ? "spotted" : " ";
+                //Console.WriteLine($"{name2}: {spottedStatus}");
                 entity.bones = Calculate.ReadBones(boneMatrix, swed);
                 entity.bones2d = Calculate.ReadBones2d(entity.bones, viewMatrix, screenSize);
 

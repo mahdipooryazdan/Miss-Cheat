@@ -108,7 +108,9 @@ namespace basicESP
 
             DrawOverlay(screensize);
             drawList = ImGui.GetWindowDrawList();
-            if (enableESP == true)
+
+
+                if (enableESP == true)
             {
                 foreach (var entity in entities)
                 {
