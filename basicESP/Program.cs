@@ -69,7 +69,8 @@ class Program
         int m_bBeingDefused = clientDll.ContainsKey("m_bBeingDefused") ? clientDll["m_bBeingDefused"] : 0xFC4;
         int m_flDefuseLength = clientDll.ContainsKey("m_flDefuseLength") ? clientDll["m_flDefuseLength"] : 0xFD4;
         int m_flDefuseCountDown = clientDll.ContainsKey("m_flDefuseCountDown") ? clientDll["m_flDefuseCountDown"] : 0xFD8;
-
+        int m_entitySpottedState = clientDll.ContainsKey("m_entitySpottedState") ? clientDll["m_entitySpottedState"] : 0x23A8;
+        int m_bSpotted = clientDll.ContainsKey("m_bSpotted") ? clientDll["m_bSpotted"] : 0x8;
 
         bool bombPlanted = false;
         Task bombTimerTask = null;
