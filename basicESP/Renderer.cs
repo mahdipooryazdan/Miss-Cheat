@@ -40,8 +40,9 @@ namespace basicESP
         private bool enableWeaponName = false;
         public bool bombPlanted =false;
         public bool enableBone = false;
-        public double timeLeft = -1;
-
+        public double timerc4 = 0;
+        public bool defuse = false;
+        public double timerdefuse = 0;
         public Vector2 c4Pos2D = Vector2.Zero;
         private Vector4 enemyColor = new Vector4(1, 0, 0, 1);
         private Vector4 teamColor = new Vector4(0, 1, 0, 1);
@@ -92,16 +93,8 @@ namespace basicESP
 
             }
 
-            ImGui.Begin("Bomb timer");
-            if (bombPlanted)
-            {
-                ImGui.TextColored(C4ColorRed, "Bomb Planted");
-                ImGui.Text($"Seconds Before Detonation: {timeLeft}");
-            }
-            else
-            {
-                ImGui.TextColored(C4ColorGreen, "Bomb Not Planted");
-            }
+
+
 
 
 
@@ -122,6 +115,7 @@ namespace basicESP
                         WeaponName(entity, 15);
                     }
                     c4Position();
+                    DrawBombTimerToScreen();
 
                 }
             }
@@ -135,6 +129,36 @@ namespace basicESP
             }
             return false;
         }
+
+        private void DrawBombTimerToScreen()
+        {
+            float screenHeight = ImGui.GetIO().DisplaySize.Y;
+
+            Vector2 position = new Vector2(10, screenHeight / 2);
+            position.Y += 20;
+
+            if (bombPlanted)
+            {
+                if (defuse)
+                {
+                    if (timerc4 > timerdefuse)
+                    {
+                        drawList.AddText(position, ImGui.ColorConvertFloat4ToU32(C4ColorGreen), $"Defuse Timer : {timerdefuse:F2}");
+                    }
+                    else
+                    {
+                        drawList.AddText(position, ImGui.ColorConvertFloat4ToU32(C4ColorRed), $"Defuse Timer : {timerdefuse:F2}");
+                    }
+                    position.Y += 20;
+                }
+
+                drawList.AddText(position, ImGui.ColorConvertFloat4ToU32(C4ColorRed), $"Bomb Timer : {timerc4:F2}");
+            }
+        }
+
+
+
+
         private void DrawBones(Entity entity) 
         {
             if (enableBone == true)
@@ -189,7 +213,7 @@ namespace basicESP
         {
             if (bombPlanted)
             {
-                float bombMarkerSize = 5.0f;
+                float bombMarkerSize = 1.5f;
                 Vector4 bombMarkerColor = C4ColorRed;
 
                 if (c4Pos2D != Vector2.Zero)

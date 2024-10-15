@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Threading;
 using ImGuiNET;
 using System.Timers;
+using static System.Net.Mime.MediaTypeNames;
+using System.Diagnostics;
 
 class Program
 {
@@ -39,6 +41,7 @@ class Program
         int dwLocalPlayerController = offsets.ContainsKey("dwLocalPlayerController") ? offsets["dwLocalPlayerController"] : 0x1A0D8E8;
         int dwGameRules = offsets.ContainsKey("dwGameRules") ? offsets["dwGameRules"] : 0x1A1B848;
         int dwPlantedC4 = offsets.ContainsKey("dwPlantedC4") ? offsets["dwPlantedC4"] : 0x1A24078;
+        int dwGlobalVars = offsets.ContainsKey("dwGlobalVars") ? offsets["dwGlobalVars"] : 0x1819000;
 
         //client
         int m_vOldOrigin = clientDll.ContainsKey("m_vOldOrigin") ? clientDll["m_vOldOrigin"] : 0x131C;
@@ -61,6 +64,11 @@ class Program
         int m_bBombPlanted = clientDll.ContainsKey("C_CSGameRules.m_bBombPlanted") ? clientDll["C_CSGameRules.m_bBombPlanted"] : 0x9A5;
         int m_pGameSceneNode = clientDll.ContainsKey("m_pGameSceneNode") ? clientDll["m_pGameSceneNode"] : 0x328;
         int m_vecAbsOrigin = clientDll.ContainsKey("m_vecAbsOrigin") ? clientDll["m_vecAbsOrigin"] : 0xD0;
+        int m_flC4Blow = clientDll.ContainsKey("m_flC4Blow") ? clientDll["m_flC4Blow"] : 0xFB8;
+        int m_flTimerLength = clientDll.ContainsKey("m_flTimerLength") ? clientDll["m_flTimerLength"] : 0xFC0;
+        int m_bBeingDefused = clientDll.ContainsKey("m_bBeingDefused") ? clientDll["m_bBeingDefused"] : 0xFC4;
+        int m_flDefuseLength = clientDll.ContainsKey("m_flDefuseLength") ? clientDll["m_flDefuseLength"] : 0xFD4;
+        int m_flDefuseCountDown = clientDll.ContainsKey("m_flDefuseCountDown") ? clientDll["m_flDefuseCountDown"] : 0xFD8;
 
 
         bool bombPlanted = false;
@@ -74,46 +82,86 @@ class Program
             {
                 bombPlanted = swed.ReadBool(gameRules, m_bBombPlanted);
                 bool cplantedc4 = swed.ReadBool(clientBase, dwPlantedC4 - 0x8);
+                IntPtr planted_c4 = swed.ReadPointer(swed.ReadPointer(clientBase, dwPlantedC4));
 
-                if (cplantedc4)
+                if (cplantedc4 && !renderer.bombPlanted)
                 {
-                    IntPtr planted_c4 = swed.ReadPointer(swed.ReadPointer(clientBase, dwPlantedC4));
-                    IntPtr c4Node = swed.ReadPointer(planted_c4, m_pGameSceneNode);
-                    Vector3 c4Origin = swed.ReadVec(c4Node, m_vecAbsOrigin);
+                    float timerc4 = swed.ReadFloat(planted_c4, m_flTimerLength);
+                    bool defuse = swed.ReadBool(planted_c4, m_bBeingDefused);
+                    float timerdefuse = swed.ReadFloat(planted_c4, m_flDefuseLength);
 
-                    float[] viewMatrix = swed.ReadMatrix(clientBase + dwViewMatrix);
-                    Vector2 calculatedC4Pos2D = Calculate.WorldToScreen(viewMatrix, c4Origin, screenSize);
-
-                    renderer.c4Pos2D = calculatedC4Pos2D;
+                    renderer.timerc4 = timerc4;
+                    renderer.defuse = defuse;
+                    renderer.timerdefuse = timerdefuse;
                 }
-
-                renderer.bombPlanted = bombPlanted;
 
                 if (bombPlanted && (bombTimerTask == null || bombTimerTask.IsCompleted))
                 {
                     bombTimerTask = Task.Run(() =>
                     {
-                        double timeLeft = 40.0; 
-                        for (int i = 0; i < 400; i++) 
+                        double timeLeft = renderer.timerc4;
+                        Stopwatch bombStopwatch = new Stopwatch();
+                        bombStopwatch.Start();
+
+                        Stopwatch defuseStopwatch = null; 
+                        bool isDefusing = false;
+
+                        while (true)
                         {
                             bombPlanted = swed.ReadBool(gameRules, m_bBombPlanted);
-                            if (!bombPlanted)
+                            if (!bombPlanted || bombStopwatch.Elapsed.TotalSeconds >= timeLeft)
                                 break;
 
-                            timeLeft -= 0.1;
-                            renderer.timeLeft = timeLeft;
-                            renderer.bombPlanted = true;
+                            double elapsed = bombStopwatch.Elapsed.TotalSeconds;
+                            renderer.timerc4 = Math.Round(timeLeft - elapsed, 2);
 
-                            Thread.Sleep(100);
+                            bool defuse = swed.ReadBool(planted_c4, m_bBeingDefused);
+                            if (defuse)
+                            {
+                                if (!isDefusing) 
+                                {
+                                    defuseStopwatch = new Stopwatch();
+                                    defuseStopwatch.Start();
+                                    isDefusing = true;
+                                }
+
+                                double defelapsed = defuseStopwatch.Elapsed.TotalSeconds;
+                                float timerdefuse = swed.ReadFloat(planted_c4, m_flDefuseLength);
+                                renderer.defuse = true;
+                                renderer.timerdefuse = Math.Round(timerdefuse - defelapsed, 2);
+                            }
+                            else
+                            {
+                                isDefusing = false; 
+                                renderer.defuse = false;
+                                renderer.timerdefuse = 0;
+                                defuseStopwatch = null; 
+                            }
+
+                            IntPtr c4Node = swed.ReadPointer(planted_c4, m_pGameSceneNode);
+                            Vector3 c4Origin = swed.ReadVec(c4Node, m_vecAbsOrigin);
+
+                            float[] viewMatrix = swed.ReadMatrix(clientBase + dwViewMatrix);
+                            Vector2 calculatedC4Pos2D = Calculate.WorldToScreen(viewMatrix, c4Origin, screenSize);
+
+                            renderer.c4Pos2D = calculatedC4Pos2D;
+
+                            renderer.bombPlanted = true;
                         }
-                        renderer.timeLeft = -1;
+
+                        bombStopwatch.Stop();
+                        renderer.timerc4 = -1;
                         renderer.bombPlanted = false;
+                        renderer.defuse = false;
+                        renderer.timerdefuse = 0;
                     });
                 }
                 else if (!bombPlanted)
                 {
-                    renderer.timeLeft = -1;
+                    renderer.timerc4 = -1;
                     renderer.bombPlanted = false;
+                    renderer.defuse = false;
+                    renderer.timerdefuse = 0;
                 }
             }
 
