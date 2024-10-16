@@ -15,6 +15,7 @@ namespace basicESP
 {
     public class Renderer : Overlay
     {
+        
         [DllImport("user32.dll")]
         static extern int GetSystemMetrics(int nIndex);
 
@@ -52,7 +53,7 @@ namespace basicESP
         private Vector4 C4ColorRed = new Vector4(1, 0, 0, 1);
         private Vector4 C4ColorGreen = new Vector4(0, 1, 0, 1);
 
-        private Vector4 isScopedColor = new Vector4(1, 1, 0, 0.5f);
+        private Vector4 isScopedColor = new Vector4(1, 1, 0, 1);
         private Vector4 isFlashColor = new Vector4(0, 1, 0, 0.5f);
         private Vector4 IsDefusingColor = new Vector4(0, 0, 1, 1);
 
@@ -99,11 +100,6 @@ namespace basicESP
             if (ImGui.CollapsingHeader("isScoped Color"))
             {
                 ImGui.ColorPicker4("##isScoped", ref isScopedColor);
-
-            }
-            if (ImGui.CollapsingHeader("isFlash Color"))
-            {
-                ImGui.ColorPicker4("##isFlash", ref isFlashColor);
 
             }
             if (ImGui.CollapsingHeader("isFlash Color"))
@@ -332,35 +328,19 @@ namespace basicESP
                     float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
                     Vector2 recTop = new Vector2(entity.viewPosition2D.X - entityHeight / 4, entity.viewPosition2D.Y);
                     Vector2 rectBottom = new Vector2(entity.position2D.X + entityHeight / 4, entity.position2D.Y);
-
-
                     if (entity.isScoped)
                     {
-
                         drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(isScopedColor));
                     }
-                    else
+                    else if (entity.IsDefusing)
                     {
-                        drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
-                    }
-                    if (entity.IsDefusing)
-                    {
-
                         drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(IsDefusingColor));
                     }
                     else
                     {
-                        drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
+                        drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor)); 
                     }
-                    //if (entity.IsFlashed)
-                    //{
 
-                    //    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(isFlashColor));
-                    //}
-                    //else
-                    //{
-                    //    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
-                    //}
                 }
             }
             else if (localPlayer.team != entity.team)
@@ -376,33 +356,20 @@ namespace basicESP
 
                 if (entity.isScoped)
                 {
-                    
                     drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(isScopedColor));
                 }
-                else
+                else if (entity.IsDefusing)
                 {
-                    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
-                }
-                if (entity.IsDefusing)
-                {
-
                     drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(IsDefusingColor));
                 }
                 else
                 {
                     drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
                 }
-                //if (entity.IsFlashed)
-                //{
 
-                //    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(isFlashColor));
-                //}
-                //else
-                //{
-                //    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
-                //}
             }
         }
+
         private void WeaponName(Entity entity, int offset)
         {
             if (enableWeaponName == true)

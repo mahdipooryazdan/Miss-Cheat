@@ -131,7 +131,6 @@ class Program
                                     isDefusing = true;
                                 }
                                 string BombDefuser = swed.ReadString(planted_c4, m_hBombDefuser, 16).Split("\0")[0];
-                                Console.WriteLine(BombDefuser);
                                 double defelapsed = defuseStopwatch.Elapsed.TotalSeconds;
                                 float timerdefuse = swed.ReadFloat(planted_c4, m_flDefuseLength);
                                 renderer.defuse = true;
@@ -193,7 +192,8 @@ class Program
                 IntPtr currentPawn = swed.ReadPointer(ListEntry2, 0x78 * (pawHandlle & 0x1FF));
                 if (currentPawn == IntPtr.Zero) continue;
 
-                bool isScoped = swed.ReadBool(currentPawn, m_bIsScoped);
+
+
                 bool IsDefusing = swed.ReadBool(currentPawn, m_bIsDefusing);
 
                 int lifeState = swed.ReadInt(currentPawn, m_lifeState);
@@ -230,8 +230,9 @@ class Program
                 //Console.WriteLine($"{name2}: {spottedStatus}");
                 entity.bones = Calculate.ReadBones(boneMatrix, swed);
                 entity.bones2d = Calculate.ReadBones2d(entity.bones, viewMatrix, screenSize);
-                entity.isScoped = isScoped;
+                
                 entity.IsDefusing = IsDefusing;
+                entity.isScoped  = swed.ReadBool(currentPawn, m_bIsScoped);
 
                 entities.Add(entity);
 
