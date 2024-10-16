@@ -19,11 +19,15 @@ namespace basicESP
         public int team { get; set; }
         public string name { get; set; }
         public int health { get; set; }
-
         public string localPlayercontrol { get; set; }
         public short weaponIndex { get; set; }
         public string currentWeaponName { get; set; }
         public float distance { get; set; }
+
+        public bool isScoped { get; set; }
+        public bool IsDefusing { get; set; }
+        public float IsFlashed { get; set; }
+
     }
 
     public enum BoneIds

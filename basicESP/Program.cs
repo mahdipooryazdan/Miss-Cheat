@@ -72,12 +72,16 @@ class Program
         int m_entitySpottedState = clientDll.ContainsKey("m_entitySpottedState") ? clientDll["m_entitySpottedState"] : 0x1B48;
         int m_bSpotted = clientDll.ContainsKey("m_bSpotted") ? clientDll["m_bSpotted"] : 0x8;
         int m_hBombDefuser = clientDll.ContainsKey("m_hBombDefuser") ? clientDll["m_hBombDefuser"] : 0xFE8;
+        int m_bIsDefusing = clientDll.ContainsKey("m_bIsDefusing") ? clientDll["m_bIsDefusing"] : 0x23D2;
+        int m_bIsScoped = clientDll.ContainsKey("m_bIsScoped") ? clientDll["m_bIsScoped"] : 0x23D0;
+        int m_flFlashDuration = clientDll.ContainsKey("m_flFlashDuration") ? clientDll["m_flFlashDuration"] : 0x23D0;
 
         bool bombPlanted = false;
         Task bombTimerTask = null;
 
         while (true)
         {
+            
             IntPtr gameRules = swed.ReadPointer(clientBase, dwGameRules); 
 
             if (gameRules != IntPtr.Zero)
@@ -175,6 +179,8 @@ class Program
             IntPtr localPlayerPawn = swed.ReadPointer(clientBase, dwLocalPlayerPawn);
             IntPtr localPlayercontrol = swed.ReadPointer(clientBase, dwLocalPlayerController);
 
+
+
             localPlayer.team = swed.ReadInt(localPlayerPawn, m_iTeamNum);
             for (int i = 0; i < 64; i++)
             {
@@ -187,12 +193,16 @@ class Program
                 IntPtr currentPawn = swed.ReadPointer(ListEntry2, 0x78 * (pawHandlle & 0x1FF));
                 if (currentPawn == IntPtr.Zero) continue;
 
+                bool isScoped = swed.ReadBool(currentPawn, m_bIsScoped);
+                bool IsDefusing = swed.ReadBool(currentPawn, m_bIsDefusing);
+
                 int lifeState = swed.ReadInt(currentPawn, m_lifeState);
                 if (lifeState != 256) continue;
                 IntPtr currentWeapon = swed.ReadPointer(currentPawn, m_pClippingWeapon);
                 short WeaponDefinitionIndex = swed.ReadShort(currentWeapon, m_AttributeManager + m_Item + m_iItemDefinitionIndex);
                 if (WeaponDefinitionIndex == -1) continue;
 
+                
                 float heightOffset = 12;
                 float[] viewMatrix = swed.ReadMatrix(clientBase + dwViewMatrix);
 
@@ -220,6 +230,8 @@ class Program
                 //Console.WriteLine($"{name2}: {spottedStatus}");
                 entity.bones = Calculate.ReadBones(boneMatrix, swed);
                 entity.bones2d = Calculate.ReadBones2d(entity.bones, viewMatrix, screenSize);
+                entity.isScoped = isScoped;
+                entity.IsDefusing = IsDefusing;
 
                 entities.Add(entity);
 

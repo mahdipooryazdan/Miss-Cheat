@@ -52,6 +52,10 @@ namespace basicESP
         private Vector4 C4ColorRed = new Vector4(1, 0, 0, 1);
         private Vector4 C4ColorGreen = new Vector4(0, 1, 0, 1);
 
+        private Vector4 isScopedColor = new Vector4(1, 1, 0, 0.5f);
+        private Vector4 isFlashColor = new Vector4(0, 1, 0, 0.5f);
+        private Vector4 IsDefusingColor = new Vector4(0, 0, 1, 1);
+
         float boneThickness = 4;
 
         ImDrawListPtr drawList;
@@ -92,9 +96,26 @@ namespace basicESP
                 ImGui.ColorPicker4("##bonecolor", ref boneColor);
 
             }
+            if (ImGui.CollapsingHeader("isScoped Color"))
+            {
+                ImGui.ColorPicker4("##isScoped", ref isScopedColor);
 
+            }
+            if (ImGui.CollapsingHeader("isFlash Color"))
+            {
+                ImGui.ColorPicker4("##isFlash", ref isFlashColor);
 
+            }
+            if (ImGui.CollapsingHeader("isFlash Color"))
+            {
+                ImGui.ColorPicker4("##isFlash", ref isFlashColor);
 
+            }
+            if (ImGui.CollapsingHeader("IsDefusing Color"))
+            {
+                ImGui.ColorPicker4("##IsDefusing", ref IsDefusingColor);
+
+            }
 
 
 
@@ -311,7 +332,35 @@ namespace basicESP
                     float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
                     Vector2 recTop = new Vector2(entity.viewPosition2D.X - entityHeight / 4, entity.viewPosition2D.Y);
                     Vector2 rectBottom = new Vector2(entity.position2D.X + entityHeight / 4, entity.position2D.Y);
-                    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
+
+
+                    if (entity.isScoped)
+                    {
+
+                        drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(isScopedColor));
+                    }
+                    else
+                    {
+                        drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
+                    }
+                    if (entity.IsDefusing)
+                    {
+
+                        drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(IsDefusingColor));
+                    }
+                    else
+                    {
+                        drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
+                    }
+                    //if (entity.IsFlashed)
+                    //{
+
+                    //    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(isFlashColor));
+                    //}
+                    //else
+                    //{
+                    //    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
+                    //}
                 }
             }
             else if (localPlayer.team != entity.team)
@@ -324,7 +373,34 @@ namespace basicESP
                 float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
                 Vector2 recTop = new Vector2(entity.viewPosition2D.X - entityHeight / 4f, entity.viewPosition2D.Y);
                 Vector2 rectBottom = new Vector2(entity.position2D.X + entityHeight / 4f, entity.position2D.Y);
-                drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
+
+                if (entity.isScoped)
+                {
+                    
+                    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(isScopedColor));
+                }
+                else
+                {
+                    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
+                }
+                if (entity.IsDefusing)
+                {
+
+                    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(IsDefusingColor));
+                }
+                else
+                {
+                    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
+                }
+                //if (entity.IsFlashed)
+                //{
+
+                //    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(isFlashColor));
+                //}
+                //else
+                //{
+                //    drawList.AddRect(recTop, rectBottom, ImGui.ColorConvertFloat4ToU32(boxColor));
+                //}
             }
         }
         private void WeaponName(Entity entity, int offset)
@@ -394,7 +470,6 @@ namespace basicESP
 
                 float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
                 float boxWidth = entityHeight / 4;
-                Console.WriteLine(entity.name);
                 Vector2 namepossition = new Vector2(entity.viewPosition2D.X - boxWidth - 5, entity.viewPosition2D.Y - offset);
                 drawList.AddText(namepossition, ImGui.ColorConvertFloat4ToU32(nameColor), $"{entity.name}");
             }
