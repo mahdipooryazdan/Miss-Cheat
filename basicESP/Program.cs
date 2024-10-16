@@ -14,8 +14,11 @@ using System.Diagnostics;
 
 class Program
 {
+
+
     static async Task Main(string[] args)
     {
+
         HttpClient client = new HttpClient();
         string offsetsUrl = "https://raw.githubusercontent.com/a2x/cs2-dumper/main/output/offsets.cs";
         string clientDllUrl = "https://raw.githubusercontent.com/a2x/cs2-dumper/main/output/client_dll.cs";

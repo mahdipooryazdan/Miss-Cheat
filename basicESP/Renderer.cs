@@ -152,8 +152,9 @@ namespace basicESP
 
         private void DrawBombTimerToScreen()
         {
+            string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
             float screenHeight = ImGui.GetIO().DisplaySize.Y;
-
+            ReplaceFont(fontPath, 15, FontGlyphRangeType.English);
             Vector2 position = new Vector2(10, screenHeight / 2);
             position.Y += 20;
 
@@ -178,7 +179,7 @@ namespace basicESP
 
 
 
-
+        
         private void DrawBones(Entity entity) 
         {
             if (enableBone == true)
@@ -378,9 +379,7 @@ namespace basicESP
                 {
                     var io = ImGui.GetIO();
                     string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
-                    float fontSize = 11.0f;
-                    ImFontPtr myCustomFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize);
-
+                    ReplaceFont(fontPath, 15, FontGlyphRangeType.English);
                     float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
                     float boxWidth = entityHeight / 4;
 
@@ -395,9 +394,7 @@ namespace basicESP
                     }
                     var io = ImGui.GetIO();
                     string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
-                    float fontSize = 11.0f;
-                    ImFontPtr myCustomFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize);
-
+                    ReplaceFont(fontPath, 15, FontGlyphRangeType.English);
                     float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
                     float boxWidth = entityHeight / 4;
 
@@ -419,9 +416,7 @@ namespace basicESP
                 }
                 var io = ImGui.GetIO();
                 string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
-                float fontSize = 11.0f;
-                ImFontPtr myCustomFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize);
-
+                ReplaceFont(fontPath, 15, FontGlyphRangeType.English);
                 float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
                 float boxWidth = entityHeight / 4;
 
@@ -432,9 +427,7 @@ namespace basicESP
             {
                 var io = ImGui.GetIO();
                 string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "Roboto-Black.ttf");
-                float fontSize = 11.0f;
-                ImFontPtr myCustomFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize);
-
+                ReplaceFont(fontPath, 15, FontGlyphRangeType.English);
                 float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
                 float boxWidth = entityHeight / 4;
                 Vector2 namepossition = new Vector2(entity.viewPosition2D.X - boxWidth - 5, entity.viewPosition2D.Y - offset);
