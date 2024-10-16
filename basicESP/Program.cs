@@ -35,26 +35,26 @@ class Program
         Entity localPlayer = new Entity();
 
         //Offset
-        int dwEntityList = offsets.ContainsKey("dwEntityList") ? offsets["dwEntityList"] : 0x19BDE30;
-        int dwViewMatrix = offsets.ContainsKey("dwViewMatrix") ? offsets["dwViewMatrix"] : 0x1A1FF40;
-        int dwLocalPlayerPawn = offsets.ContainsKey("dwLocalPlayerPawn") ? offsets["dwLocalPlayerPawn"] : 0x1825138;
-        int dwLocalPlayerController = offsets.ContainsKey("dwLocalPlayerController") ? offsets["dwLocalPlayerController"] : 0x1A0D8E8;
-        int dwGameRules = offsets.ContainsKey("dwGameRules") ? offsets["dwGameRules"] : 0x1A1B848;
-        int dwPlantedC4 = offsets.ContainsKey("dwPlantedC4") ? offsets["dwPlantedC4"] : 0x1A24078;
-        int dwGlobalVars = offsets.ContainsKey("dwGlobalVars") ? offsets["dwGlobalVars"] : 0x1819000;
+        int dwEntityList = offsets.ContainsKey("dwEntityList") ? offsets["dwEntityList"] : 0x19CA848;
+        int dwViewMatrix = offsets.ContainsKey("dwViewMatrix") ? offsets["dwViewMatrix"] : 0x1A2CAD0;
+        int dwLocalPlayerPawn = offsets.ContainsKey("dwLocalPlayerPawn") ? offsets["dwLocalPlayerPawn"] : 0x182FAE8;
+        int dwLocalPlayerController = offsets.ContainsKey("dwLocalPlayerController") ? offsets["dwLocalPlayerController"] : 0x1A1A690;
+        int dwGameRules = offsets.ContainsKey("dwGameRules") ? offsets["dwGameRules"] : 0x1A28408;
+        int dwPlantedC4 = offsets.ContainsKey("dwPlantedC4") ? offsets["dwPlantedC4"] : 0x1A32040;
+        int dwGlobalVars = offsets.ContainsKey("dwGlobalVars") ? offsets["dwGlobalVars"] : 0x1823CB0;
 
         //client
-        int m_vOldOrigin = clientDll.ContainsKey("m_vOldOrigin") ? clientDll["m_vOldOrigin"] : 0x131C;
+        int m_vOldOrigin = clientDll.ContainsKey("m_vOldOrigin") ? clientDll["m_vOldOrigin"] : 0x1324;
         int m_iTeamNum = clientDll.ContainsKey("m_iTeamNum") ? clientDll["m_iTeamNum"] : 0x3E3;
         int m_lifeState = clientDll.ContainsKey("m_lifeState") ? clientDll["m_lifeState"] : 0x348;
         int m_hPlayerPawn = clientDll.ContainsKey("m_hPlayerPawn") ? clientDll["m_hPlayerPawn"] : 0x80C;
-        int m_vecViewOffset = clientDll.ContainsKey("m_vecViewOffset") ? clientDll["m_vecViewOffset"] : 0xCA8;
+        int m_vecViewOffset = clientDll.ContainsKey("C_BaseModelEntity.m_vecViewOffset") ? clientDll["C_BaseModelEntity.m_vecViewOffset"] : 0xCB0;
         int m_iszPlayerName = clientDll.ContainsKey("m_iszPlayerName") ? clientDll["m_iszPlayerName"] : 0x660;
 
-        int m_Item = clientDll.ContainsKey("m_Item") ? clientDll["m_Item"] : 0x50;
-        int m_pClippingWeapon = clientDll.ContainsKey("m_pClippingWeapon") ? clientDll["m_pClippingWeapon"] : 0x1398;
+        int m_Item = clientDll.ContainsKey("C_AttributeContainer.m_Item") ? clientDll["C_AttributeContainer.m_Item"] : 0x50;
+        int m_pClippingWeapon = clientDll.ContainsKey("C_CSPlayerPawnBase.m_pClippingWeapon") ? clientDll["C_CSPlayerPawnBase.m_pClippingWeapon"] : 0x13A0;
         int m_iItemDefinitionIndex = clientDll.ContainsKey("m_iItemDefinitionIndex") ? clientDll["m_iItemDefinitionIndex"] : 0x1BA;
-        int m_AttributeManager = clientDll.ContainsKey("C_EconEntity.m_AttributeManager")? clientDll["C_EconEntity.m_AttributeManager"]: 0x1140;
+        int m_AttributeManager = clientDll.ContainsKey("C_EconEntity.m_AttributeManager")? clientDll["C_EconEntity.m_AttributeManager"]: 0x1148;
         int m_iHealth = clientDll.ContainsKey("m_iHealth") ? clientDll["m_iHealth"] : 0x344;
         int m_modelState = clientDll.ContainsKey("CSkeletonInstance.m_modelState") ? clientDll["CSkeletonInstance.m_modelState"] : 0x170;
 
@@ -64,20 +64,21 @@ class Program
         int m_bBombPlanted = clientDll.ContainsKey("C_CSGameRules.m_bBombPlanted") ? clientDll["C_CSGameRules.m_bBombPlanted"] : 0x9A5;
         int m_pGameSceneNode = clientDll.ContainsKey("m_pGameSceneNode") ? clientDll["m_pGameSceneNode"] : 0x328;
         int m_vecAbsOrigin = clientDll.ContainsKey("m_vecAbsOrigin") ? clientDll["m_vecAbsOrigin"] : 0xD0;
-        int m_flC4Blow = clientDll.ContainsKey("m_flC4Blow") ? clientDll["m_flC4Blow"] : 0xFB8;
-        int m_flTimerLength = clientDll.ContainsKey("m_flTimerLength") ? clientDll["m_flTimerLength"] : 0xFC0;
-        int m_bBeingDefused = clientDll.ContainsKey("m_bBeingDefused") ? clientDll["m_bBeingDefused"] : 0xFC4;
-        int m_flDefuseLength = clientDll.ContainsKey("m_flDefuseLength") ? clientDll["m_flDefuseLength"] : 0xFD4;
-        int m_flDefuseCountDown = clientDll.ContainsKey("m_flDefuseCountDown") ? clientDll["m_flDefuseCountDown"] : 0xFD8;
-        int m_entitySpottedState = clientDll.ContainsKey("m_entitySpottedState") ? clientDll["m_entitySpottedState"] : 0x23A8;
+        int m_flC4Blow = clientDll.ContainsKey("m_flC4Blow") ? clientDll["m_flC4Blow"] : 0xFC0;
+        int m_flTimerLength = clientDll.ContainsKey("m_flTimerLength") ? clientDll["m_flTimerLength"] : 0xFC8;
+        int m_bBeingDefused = clientDll.ContainsKey("m_bBeingDefused") ? clientDll["m_bBeingDefused"] : 0xFCC;
+        int m_flDefuseLength = clientDll.ContainsKey("m_flDefuseLength") ? clientDll["m_flDefuseLength"] : 0xFDC;
+        int m_flDefuseCountDown = clientDll.ContainsKey("m_flDefuseCountDown") ? clientDll["m_flDefuseCountDown"] : 0xFE0;
+        int m_entitySpottedState = clientDll.ContainsKey("m_entitySpottedState") ? clientDll["m_entitySpottedState"] : 0x1B48;
         int m_bSpotted = clientDll.ContainsKey("m_bSpotted") ? clientDll["m_bSpotted"] : 0x8;
+        int m_hBombDefuser = clientDll.ContainsKey("m_hBombDefuser") ? clientDll["m_hBombDefuser"] : 0xFE8;
 
         bool bombPlanted = false;
         Task bombTimerTask = null;
 
         while (true)
         {
-            IntPtr gameRules = swed.ReadPointer(clientBase, dwGameRules);
+            IntPtr gameRules = swed.ReadPointer(clientBase, dwGameRules); 
 
             if (gameRules != IntPtr.Zero)
             {
@@ -125,7 +126,8 @@ class Program
                                     defuseStopwatch.Start();
                                     isDefusing = true;
                                 }
-
+                                string BombDefuser = swed.ReadString(planted_c4, m_hBombDefuser, 16).Split("\0")[0];
+                                Console.WriteLine(BombDefuser);
                                 double defelapsed = defuseStopwatch.Elapsed.TotalSeconds;
                                 float timerdefuse = swed.ReadFloat(planted_c4, m_flDefuseLength);
                                 renderer.defuse = true;

@@ -99,6 +99,7 @@ namespace basicESP
 
 
 
+
             DrawOverlay(screensize);
             drawList = ImGui.GetWindowDrawList();
 
@@ -341,7 +342,7 @@ namespace basicESP
                     float boxWidth = entityHeight / 4;
 
                     Vector2 weaponPosition = new Vector2(entity.viewPosition2D.X - boxWidth - 5, entity.position2D.Y + 2);
-                    drawList.AddText(myCustomFont, fontSize, weaponPosition, ImGui.ColorConvertFloat4ToU32(WeaponNameColor), $"{entity.currentWeaponName}");
+                    drawList.AddText(weaponPosition, ImGui.ColorConvertFloat4ToU32(WeaponNameColor), $"{entity.currentWeaponName}");
                 }
                 if (enableteam == true && localPlayer.team == entity.team)
                 {
@@ -358,7 +359,7 @@ namespace basicESP
                     float boxWidth = entityHeight / 4;
 
                     Vector2 weaponPosition = new Vector2(entity.viewPosition2D.X - boxWidth - 5, entity.position2D.Y + 2);
-                    drawList.AddText(myCustomFont, fontSize, weaponPosition, ImGui.ColorConvertFloat4ToU32(WeaponNameColor), $"{entity.currentWeaponName}");
+                    drawList.AddText(weaponPosition, ImGui.ColorConvertFloat4ToU32(WeaponNameColor), $"{entity.currentWeaponName}");
                 }
             }
         }
@@ -382,7 +383,7 @@ namespace basicESP
                 float boxWidth = entityHeight / 4;
 
                 Vector2 namepossition = new Vector2(entity.viewPosition2D.X - boxWidth - 5, entity.viewPosition2D.Y - offset);
-                drawList.AddText(myCustomFont, fontSize, namepossition, ImGui.ColorConvertFloat4ToU32(nameColor), $"{entity.name}");
+                drawList.AddText(namepossition, ImGui.ColorConvertFloat4ToU32(nameColor), $"{entity.name}");
             }
             else if (localPlayer.team != entity.team)
             {
@@ -393,9 +394,9 @@ namespace basicESP
 
                 float entityHeight = entity.position2D.Y - entity.viewPosition2D.Y;
                 float boxWidth = entityHeight / 4;
-
+                Console.WriteLine(entity.name);
                 Vector2 namepossition = new Vector2(entity.viewPosition2D.X - boxWidth - 5, entity.viewPosition2D.Y - offset);
-                drawList.AddText(myCustomFont, fontSize, namepossition, ImGui.ColorConvertFloat4ToU32(nameColor), $"{entity.name}");
+                drawList.AddText(namepossition, ImGui.ColorConvertFloat4ToU32(nameColor), $"{entity.name}");
             }
         }
 
